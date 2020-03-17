@@ -9,7 +9,7 @@ __all__ = ['AverageNumberOfTweetsPerUser']
 
 class AverageNumberOfTweetsPerUser(View):
     def get(self, request):
-        results = Account.objects.annotate(tweets_per_user=Count('tweets'))\
+        results = Account.objects.prefetch_related('tweets').annotate(tweets_per_user=Count('tweets'))\
             .only('tweets_per_user')\
             .aggregate(average_number=Avg('tweets_per_user'))
 

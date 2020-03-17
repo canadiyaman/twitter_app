@@ -9,13 +9,13 @@ __all__ = ['NumberOfUsersWithoutAnyFollowersView', 'AverageNumberOfFollowersPerU
 
 class NumberOfUsersWithoutAnyFollowersView(View):
     def get(self, request):
-        the_number = Account.objects.filter(followers=None).count()
+        the_number = Account.objects.prefetch_related('followers').filter(followers=None).count()
         return JsonResponse({'number': the_number}, safe=False)
 
 
 class AverageNumberOfFollowersPerUserView(View):
     def get(self, request):
-        result = Account.objects \
+        result = Account.objects.prefetch_related('followers') \
             .annotate(followers_count=Count('followers')) \
             .aggregate(average_number=Avg('followers_count'))
         average_number = result.get('average_number')
